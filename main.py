@@ -31,7 +31,7 @@ def state():
     return ''.join(data[numpy.random.randint(0,63)][i] for i in range(0,6))
 
 """
-    The N-bit multiplexer is a single step problem, and thus always is at the end of the problem
+    The 6bit multiplexer is a single step problem, and thus always is at the end of the problem
 """
 def eop():
     return True
