@@ -10,6 +10,13 @@ The main XCS class
 """
 
 class XCS:
+    """
+        Initializes an instance of the X classifier system
+        @param parameters - A parameters instance (See parameters.py), containing the parameters for this system
+        @param state_function - A function which returns the current state of the system, as a string
+        @param reward_function - A function which takes a state and an action, performs the action and returns the reward
+        @param eop_function - A function which returns whether the state is at the end of the problem
+    """
     def __init__(self, parameters, state_function, reward_function, eop_function):
         self.parameters = parameters
         self.state_function = state_function
@@ -19,7 +26,7 @@ class XCS:
         self.time_stamp = 0
 
         self.previous_action_set = None #[A]_{-1}
-        self.previous_reward = 0     #rho_{-1}
+        self.previous_reward = 0        #rho_{-1}
         self.previous_state = None      #sigma_{-1}
 
     """
@@ -28,6 +35,7 @@ class XCS:
     def print_population(self):
         for i in self.population:
             print(i)
+
 
     """
        Classifies the given state, returning the class
@@ -38,6 +46,8 @@ class XCS:
         predictions = self._generate_prediction_array(match_set)
         action = numpy.argmax(predictions)
         return action
+
+
 
     """
     RUN EXPERIMENT (3.3 The main loop)
@@ -119,17 +129,17 @@ class XCS:
     SELECT ACTION (3.6 Choosing an action)
         Selects the action to run from the given prediction array. Takes into account exploration
         vs exploitation
-        @param predictions - The prediction array to generate an action from
+        @param prediction_array - The prediction array to generate an action from
     """
-    def _select_action(self, predictions):
-        valid_actions = [action for action in range(self.parameters.num_actions) if predictions[action] != 0]
+    def _select_action(self, prediction_array):
+        valid_actions = [action for action in range(self.parameters.num_actions) if prediction_array[action] != 0]
         if len(valid_actions) == 0:
             return numpy.random.randint(0, self.parameters.num_actions)
 
         if numpy.random.rand() < self.parameters.p_explr:
             return numpy.random.choice(valid_actions)
         else:
-            return numpy.argmax(predictions)
+            return numpy.argmax(prediction_array)
 
     """
     UPDATE SET (3.8 Updating classifier parameters)

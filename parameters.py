@@ -4,7 +4,7 @@ A class that represents the parameters of an XCS system
 """
 class Parameters:
     def __init__(self):
-        self.state_length = 0                 #The number of bits in the state
+        self.state_length = 6                 #The number of bits in the state
         self.num_actions = 2                  #The number of actions in this system
 
         self.N = 400                          #The maximum size of the population in micro-classifiers
@@ -16,7 +16,7 @@ class Parameters:
         self.theta_GA = 25                    #The GA threshold
         self.chi = 0.8                        #The probability of applying crossover in the GA
         self.mu = 0.04                        #The probability of mutating an allele in the offspring
-        self.theta_del = 25                   #The deletion threshold
+        self.theta_del = 20                   #The deletion threshold
         self.delta = 0.1                      #The multiplier for the deletion vote of a classifier
         self.theta_sub = 20                   #The subsumption threshold
         self.p_hash = 0.3                     #The probability of generating a hash in a condition
