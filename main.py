@@ -18,7 +18,7 @@ learning_steps = 1000
 validation_steps = 1000
 
 #Load CSV dataset
-file = './Mux-6.csv' 
+file = './dataset/Mux-6.csv' 
 with open(file,'r') as f: 
     reader = csv.reader(f)
     data = [low for low in reader]
@@ -91,7 +91,7 @@ for j in range(validation_steps):
             classifierList.append([clas.id, clas.condition, clas.action, clas.fitness, clas.prediction, clas.error, clas.experience])
 
 print("ALL Performance " + ": " + str((this_correct / validation_steps / rmax) * 100) + "%");
-print("The whole process is finished. Check reward.csv, classifier.csv, and accuracy.csv files later, please. Thank you.")
+print("The whole process is finished. After this, check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder, please. Thank you.")
 
 #Make accuracy list (Percentage of correct answers per 1000 iterations)
 ini_k = 0
@@ -103,14 +103,14 @@ for ini_k in range(validation_steps - 1000):
     #print(accuracyList)
 
 #Make CSV files
-with open('reward.csv','w') as f:
+with open('./result/reward.csv','w') as f:
     dataWriter = csv.writer(f, lineterminator='\n')
     dataWriter.writerows(rewardList)
 
-with open('classifier.csv', 'w') as f:
+with open('./result/classifier.csv', 'w') as f:
     dataWriter = csv.writer(f, lineterminator='\n')
     dataWriter.writerows(classifierList)
 
-with open('accuracy.csv', 'w') as f:
+with open('./result/accuracy.csv', 'w') as f:
     dataWriter = csv.writer(f, lineterminator='\n')
     dataWriter.writerows(accuracyList)
