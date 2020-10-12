@@ -4,4 +4,4 @@ This is based ENTIRELY on "An algorithmic description of XCS". You can solve 6bi
 ```
 python main.py
 ```
-If you want to change the hyperparameters, see "parameters.py", please.
+If you want to change the hyperparameters, refer to "parameters.py", please.
