@@ -58,7 +58,7 @@ class Classifier:
     def _deletion_vote(self, average_fitness, theta_del, delta):
         vote = self.action_set_size * self.numerosity
         if self.experience > theta_del and self.fitness / self.numerosity < delta * average_fitness:
-            return vote * average_fitness / (self.fitness / self.numerosity)
+            vote = vote * average_fitness / (self.fitness / self.numerosity)
         
         return vote
 

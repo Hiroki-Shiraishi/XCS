@@ -150,6 +150,7 @@ class XCS:
     """
     def _update_set(self, action_set, P):
         set_numerosity = sum([clas.numerosity for clas in action_set])
+        print(set_numerosity)
         for clas in action_set:
             clas.experience = clas.experience + 1
             if clas.experience < 1. / self.parameters.beta:
@@ -270,10 +271,10 @@ class XCS:
         @param clas - the classifier to insert
     """
     def _insert_in_population(self, clas):
-        same = [c for c in self.population if (c.action, c.condition) == (clas.action, clas.condition)]
-        if same:
-            same[0].numerosity = same[0].numerosity + 1
-            return
+        for c in self.population:
+            if c.condition == clas.condition and c.action == clas.action:
+                c.numerosity += 1
+                return
         self.population.append(clas)
 
     """
@@ -296,7 +297,7 @@ class XCS:
 
         for clas in self.population:
             vote_sum = vote_sum + clas._deletion_vote(average_fitness, self.parameters.theta_del, self.parameters.delta)
-            if(clas.numerosity > choice_point):
+            if(vote_sum > choice_point):
                 if clas.numerosity > 1:
                     clas.numerosity -= 1
                 else:
@@ -338,7 +339,11 @@ GENERATE ACTION SET (3.7 Formation of the action set)
     @param match_set - The match set for generating action set
 """
 def _generate_action_set(match_set, action):
-    return [clas for clas in match_set if clas.action == action]
+    action_set = []
+    for clas in match_set:
+        if clas.action == action:
+            action_set.append(clas)
+    return action_set
 
 """
 APPLY CROSSOVER (3.9 The genetic algorithm in XCS ~Crossover~)
