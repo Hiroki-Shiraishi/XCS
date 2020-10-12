@@ -43,8 +43,8 @@ class XCS:
     """
     def classify(self, state):
         match_set = self._generate_match_set(state)
-        predictions = self._generate_prediction_array(match_set)
-        action = numpy.argmax(predictions)
+        prediction_array = self._generate_prediction_array(match_set)
+        action = numpy.argmax(prediction_array)
         return action
 
 
@@ -56,14 +56,14 @@ class XCS:
     def run_experiment(self):
         curr_state = self.state_function()  #sigma
         match_set = self._generate_match_set(curr_state)
-        predictions = self._generate_prediction_array(match_set)
-        action = self._select_action(predictions)
+        prediction_array = self._generate_prediction_array(match_set)
+        action = self._select_action(prediction_array)
         action_set = _generate_action_set(match_set, action) 
         reward = self.reward_function(curr_state, action)
 
         #Update the previous set
         if self.previous_action_set:
-            P = self.previous_reward + self.parameters.gamma * max(predictions)
+            P = self.previous_reward + self.parameters.gamma * max(prediction_array)
             self._update_set(self.previous_action_set, P)
             self._run_ga(self.previous_action_set, self.previous_state)
 
