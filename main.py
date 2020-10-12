@@ -23,7 +23,6 @@ with open(file,'r') as f:
     reader = csv.reader(f)
     data = [low for low in reader]
 
-
 """
     Returns a random state of the multiplexer
 """
@@ -88,10 +87,10 @@ for j in range(validation_steps):
         classifierList[0][5] = "Error"
         classifierList[0][6] = "Experience"
         classifierList[0][7] = "Time Stamp"
-        classifierList[0][8] = "Average Size"
+        classifierList[0][8] = "Action Set Size"
         classifierList[0][9] = "Numerosity"
         for clas in my_xcs.population:
-            classifierList.append([clas.id, clas.condition, clas.action, clas.fitness, clas.prediction, clas.error, clas.experience, clas.time_stamp, clas.average_size, clas.numerosity])
+            classifierList.append([clas.id, clas.condition, clas.action, clas.fitness, clas.prediction, clas.error, clas.experience, clas.time_stamp, clas.action_set_size, clas.numerosity])
 
 print("ALL Performance " + ": " + str((this_correct / validation_steps / rmax) * 100) + "%");
 print("The whole process is finished. After this, check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder, please. Thank you.")

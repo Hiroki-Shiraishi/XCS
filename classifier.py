@@ -18,7 +18,7 @@ class Classifier:
         self.fitness = parameters.F_I
         self.experience = 0
         self.time_stamp = 0
-        self.average_size = 1
+        self.action_set_size = 1
         self.numerosity = 1
 
         if state == None:
@@ -50,7 +50,7 @@ class Classifier:
        @param delta - See parameters.py
     """
     def _deletion_vote(self, average_fitness, theta_del, delta):
-        vote = self.average_size * self.numerosity
+        vote = self.action_set_size * self.numerosity
         if self.experience > theta_del and self.fitness / self.numerosity < delta * average_fitness:
             return vote * average_fitness / (self.fitness / self.numerosity)
         else:

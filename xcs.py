@@ -154,11 +154,11 @@ class XCS:
             if clas.experience < 1. / self.parameters.beta:
                 clas.prediction = clas.prediction + (P - clas.prediction) / clas.experience
                 clas.error = clas.error + (abs(P - clas.prediction) - clas.error) / clas.experience
-                clas.average_size = clas.average_size + (set_numerosity - clas.numerosity) / clas.experience
+                clas.action_set_size = clas.action_set_size + (set_numerosity - clas.action_set_size) / clas.experience
             else:
-                clas.prediction = clas.prediction + (P - clas.prediction) * self.parameters.beta
-                clas.error = clas.error + (abs(P - clas.prediction) - clas.error) * self.parameters.beta
-                clas.average_size = clas.average_size + (set_numerosity - clas.numerosity) * self.parameters.beta
+                clas.prediction = clas.prediction + self.parameters.beta * (P - clas.prediction)
+                clas.error = clas.error + self.parameters.beta * (abs(P - clas.prediction) - clas.error)
+                clas.action_set_size = clas.action_set_size + self.parameters.beta * (set_numerosity - clas.action_set_size)
 
         self._update_fitness(action_set)
 
@@ -321,9 +321,6 @@ class XCS:
                     action_set.remove(clas)
                     self.population.remove(clas)
 
-
-
-
 """
 DOES MATCH (3.4 Formation of the match set)
     Returns whether the given state matches the given condition
@@ -340,7 +337,6 @@ GENERATE ACTION SET (3.7 Formation of the action set)
 """
 def _generate_action_set(match_set, action):
     return [clas for clas in match_set if clas.action == action]
-
 
 """
 APPLY CROSSOVER (3.9 The genetic algorithm in XCS ~Crossover~)
