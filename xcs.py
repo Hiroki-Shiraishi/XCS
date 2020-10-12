@@ -150,7 +150,6 @@ class XCS:
     """
     def _update_set(self, action_set, P):
         set_numerosity = sum([clas.numerosity for clas in action_set])
-        print(set_numerosity)
         for clas in action_set:
             clas.experience = clas.experience + 1
             if clas.experience < 1. / self.parameters.beta:
