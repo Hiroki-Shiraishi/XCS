@@ -192,8 +192,8 @@ class XCS:
             for clas in action_set:
                 clas.time_stamp = self.time_stamp
            
-            parent_1 = _select_offspring(action_set)
-            parent_2 = _select_offspring(action_set)
+            parent_1 = self._select_offspring(action_set, selection_method = 'Tournament')
+            parent_2 = self._select_offspring(action_set, selection_method = 'Tournament')
             child_1 = deepcopy(parent_1)
             child_2 = deepcopy(parent_2)
             child_1.id = Classifier.global_id
@@ -226,6 +226,40 @@ class XCS:
                     self._insert_in_population(child)
 
                 self._delete_from_population()
+
+    """
+    SELECT OFFSPRING (3.9 The genetic algorithm in XCS ~Roulette-wheel selection~)
+        Makes parent selection in GA by Roulette-wheel selection
+        (Tournament selection is also supported.)
+        @param action_set - the set to run GA
+    """
+    def _select_offspring(self, action_set, selection_method = 'Roulette'):
+
+        if selection_method == 'Roulette':
+            fitness_sum = sum([clas.fitness for clas in action_set])
+            choice_point = numpy.random.rand()
+
+            fitness_sum = 0.
+            for clas in action_set:
+                fitness_sum = fitness_sum + clas.fitness
+                if fitness_sum > choice_point:
+                    break
+            return clas
+
+        elif selection_method == 'Tournament':
+            parent = None
+            for clas in action_set:
+                if parent == None or parent.fitness / parent.numerosity < clas.fitness / clas.numerosity:
+                    for i in range(1, clas.numerosity):
+                        if numpy.random.rand() < self.parameters.tau:
+                            parent = clas
+                            break
+            if parent == None:
+                parent = numpy.random.choice(action_set)
+            return parent
+
+        else:
+            return
 
     """
     INSERT IN POPULATION (3.10 Insertion in the population)
@@ -287,6 +321,9 @@ class XCS:
                     action_set.remove(clas)
                     self.population.remove(clas)
 
+
+
+
 """
 DOES MATCH (3.4 Formation of the match set)
     Returns whether the given state matches the given condition
@@ -304,21 +341,6 @@ GENERATE ACTION SET (3.7 Formation of the action set)
 def _generate_action_set(match_set, action):
     return [clas for clas in match_set if clas.action == action]
 
-"""
-SELECT OFFSPRING (3.9 The genetic algorithm in XCS ~Roulette-wheel selection~)
-    Makes parent selection in GA by Roulette-wheel selection
-    @param action_set - the set to run GA
-"""
-def _select_offspring(action_set):
-    fitness_sum = sum([clas.fitness for clas in action_set])
-    choice_point = numpy.random.rand()
-
-    fitness_sum = 0.
-    for clas in action_set:
-        fitness_sum = fitness_sum + clas.fitness
-        if fitness_sum > choice_point:
-            break
-    return clas
 
 """
 APPLY CROSSOVER (3.9 The genetic algorithm in XCS ~Crossover~)
