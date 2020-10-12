@@ -25,6 +25,8 @@ class Parameters:
         self.F_I       = 0.01                 #The initial fitness value in classifiers
         self.p_explr   = 1.                   #The probability during action selection ofchoosing the action uniform randomly
         self.theta_mna = 2                    #The minimal number of actions that must be present in a match set, or else covering will occur
+
+        self.tau       = 0.4                  #The probability for Tournament selection in Select Offspring function
         
         self.do_GA_subsumption         = True #A boolean parameter whether do GA subsumption or not
         self.do_action_set_subsumption = True #A boolean parameter whether do action set subsumption or not
