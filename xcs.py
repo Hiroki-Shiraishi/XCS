@@ -250,13 +250,13 @@ class XCS:
             return
 
         average_fitness = sum([clas.fitness for clas in self.population]) / numerosity_sum
-        vote_sum = 0.0
+        vote_sum = 0.
         
         for clas in self.population:
             vote_sum = vote_sum + clas._deletion_vote(average_fitness, self.parameters.theta_del, self.parameters.delta)
 
         choice_point = numpy.random.rand() * vote_sum
-        vote_sum = 0.0
+        vote_sum = 0.
 
         for clas in self.population:
             vote_sum = vote_sum + clas._deletion_vote(average_fitness, self.parameters.theta_del, self.parameters.delta)
@@ -298,6 +298,8 @@ def does_match(condition, state):
 
 """
 GENERATE ACTION SET (3.7 Formation of the action set)
+    Forms action set from match set
+    @param match_set - The match set for generating action set
 """
 def _generate_action_set(match_set, action):
     return [clas for clas in match_set if clas.action == action]
@@ -311,7 +313,7 @@ def _select_offspring(action_set):
     fitness_sum = sum([clas.fitness for clas in action_set])
     choice_point = numpy.random.rand()
 
-    fitness_sum = 0.0
+    fitness_sum = 0.
     for clas in action_set:
         fitness_sum = fitness_sum + clas.fitness
         if fitness_sum > choice_point:

@@ -12,10 +12,10 @@ import struct
 rmax = 1000
 
 #The number of steps we learn for
-learning_steps = 1000
+learning_steps = 10000
 
 #The number of steps we validate for
-validation_steps = 1000
+validation_steps = 10000
 
 #Load CSV dataset
 file = './dataset/Mux-6.csv' 
@@ -68,8 +68,8 @@ print("Training is over. ")
 
 #Make lists to generate CSV file
 rewardList = [[0] for i in range(validation_steps)]
-classifierList = [[0] * 7]
-accuracyList = []
+classifierList = [[0] * 10]
+accuracyList = [[0] for i in range(validation_steps - 1000)]
 
 #Validate
 print("The next step is the validation. Please be patient...")
@@ -87,8 +87,11 @@ for j in range(validation_steps):
         classifierList[0][4] = "Prediction"
         classifierList[0][5] = "Error"
         classifierList[0][6] = "Experience"
+        classifierList[0][7] = "Time Stamp"
+        classifierList[0][8] = "Average Size"
+        classifierList[0][9] = "Numerosity"
         for clas in my_xcs.population:
-            classifierList.append([clas.id, clas.condition, clas.action, clas.fitness, clas.prediction, clas.error, clas.experience])
+            classifierList.append([clas.id, clas.condition, clas.action, clas.fitness, clas.prediction, clas.error, clas.experience, clas.time_stamp, clas.average_size, clas.numerosity])
 
 print("ALL Performance " + ": " + str((this_correct / validation_steps / rmax) * 100) + "%");
 print("The whole process is finished. After this, check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder, please. Thank you.")
@@ -99,7 +102,7 @@ for ini_k in range(validation_steps - 1000):
     sum_1000 = 0
     for k in range(ini_k, 1000 + ini_k):
         sum_1000 = sum_1000 + rewardList[k][0]
-    accuracyList.append([sum_1000]/10000)
+    accuracyList[ini_k][0] = sum_1000/10000
     #print(accuracyList)
 
 #Make CSV files
