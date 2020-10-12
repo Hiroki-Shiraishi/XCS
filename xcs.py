@@ -36,7 +36,6 @@ class XCS:
         for i in self.population:
             print(i)
 
-
     """
        Classifies the given state, returning the class
        @param state - the state to classify
@@ -46,8 +45,6 @@ class XCS:
         prediction_array = self._generate_prediction_array(match_set)
         action = numpy.argmax(prediction_array)
         return action
-
-
 
     """
     RUN EXPERIMENT (3.3 The main loop)
@@ -77,7 +74,6 @@ class XCS:
             self.previous_state = curr_state
         self.time_stamp = self.time_stamp + 1
 
-  
     """
     GENERATE MATCH SET (3.4 Formation of the match set)
         Generates the match set for the given state, covering as necessary
@@ -115,15 +111,20 @@ class XCS:
         @param match_set - The match set to generate predictions
     """
     def _generate_prediction_array(self, match_set):
-        PA = [0] * self.parameters.num_actions
-        FSA = [0] * self.parameters.num_actions
+        PA = [None] * self.parameters.num_actions
+        FSA = [0.] * self.parameters.num_actions
         for clas in match_set:
-            PA[clas.action] += clas.prediction * clas.fitness
+            if PA[clas.action] == None:
+                PA[clas.action] = clas.prediction * clas.fitness
+            else:
+                PA[clas.action] += clas.prediction * clas.fitness
             FSA[clas.action] += clas.fitness
 
-        normal = [PA[i] if FSA[i] == 0 else PA[i]/FSA[i] for i in range(self.parameters.num_actions)]
+        for i in range(self.parameters.num_actions):
+            if FSA[i] != 0:
+                PA[i] = PA[i]/FSA[i]
 
-        return normal
+        return PA
 
     """
     SELECT ACTION (3.6 Choosing an action)
@@ -132,7 +133,7 @@ class XCS:
         @param prediction_array - The prediction array to generate an action from
     """
     def _select_action(self, prediction_array):
-        valid_actions = [action for action in range(self.parameters.num_actions) if prediction_array[action] != 0]
+        valid_actions = [action for action in range(self.parameters.num_actions) if prediction_array[action] != None]
         if len(valid_actions) == 0:
             return numpy.random.randint(0, self.parameters.num_actions)
 
@@ -188,7 +189,7 @@ class XCS:
         if len(action_set) == 0:
             return
 
-        if self.time_stamp - numpy.average([clas.time_stamp for clas in action_set], weights=[clas.numerosity for clas in action_set]) > self.parameters.theta_GA:
+        if self.time_stamp - sum([clas.time_stamp * clas.numerosity for clas in action_set]) / sum([clas.numerosity for clas in action_set]) > self.parameters.theta_GA:
             for clas in action_set:
                 clas.time_stamp = self.time_stamp
            
@@ -310,17 +311,17 @@ class XCS:
     """
     def _do_action_set_subsumption(self, action_set):
         cl = None
-        for clas in action_set:
-            if clas._could_subsume(self.parameters.theta_sub, self.parameters.e0):
-                if cl == None or len([i for i in clas.condition if i == '#']) > len([i for i in cl.condition if i == '#']) or numpy.random.rand() > 0.5:
-                    cl = clas
+        for c in action_set:
+            if c._could_subsume(self.parameters.theta_sub, self.parameters.e0):
+                if (cl == None or len([i for i in c.condition if i == '#']) > len([i for i in cl.condition if i == '#']) or (len([i for i in c.condition if i == '#']) == len([i for i in cl.condition if i == '#']) and numpy.random.rand() < 0.5)):
+                    cl = c
 
         if cl:
-            for clas in action_set:
-                if cl._is_more_general(clas):
-                    cl.numerosity = cl.numerosity + clas.numerosity
-                    action_set.remove(clas)
-                    self.population.remove(clas)
+            for c in action_set:
+                if cl._is_more_general(c):
+                    cl.numerosity = cl.numerosity + c.numerosity
+                    action_set.remove(c)
+                    self.population.remove(c)
 
 """
 DOES MATCH (3.4 Formation of the match set)

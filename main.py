@@ -59,11 +59,13 @@ parameters = xcs.Parameters()
 my_xcs = xcs.XCS(parameters, state, reward, eop)
 
 #Train
-print("Now training. Wait for a couple of seconds, please...")
+print("The training has just began. The number of the train is 10,000. Wait for a couple of seconds, please...")
 for j in range(learning_steps):
     my_xcs.run_experiment()
+    if j % 1000 == 0:
+        print("Iteration :", j)
     #my_xcs.print_population()
-print("Training is over. ")
+print("The Training is over. ")
 
 #Make lists to generate CSV file
 rewardList = [[0] for i in range(validation_steps)]
@@ -71,11 +73,13 @@ classifierList = [[0] * 10]
 accuracyList = [[0] for i in range(validation_steps - 1000)]
 
 #Validate
-print("The next step is the validation. Please be patient...")
+print("The next step is the validation. The number of the validation is 10,000. Please be patient...")
 this_correct = 0
 for j in range(validation_steps):
     rand_state = state()
     this_correct = this_correct + reward(rand_state, my_xcs.classify(rand_state))
+    if j % 1000 == 0:
+        print("Iteration :", j)
 
     rewardList[j][0]  = reward(rand_state,my_xcs.classify(rand_state))
     if j == validation_steps - 1:
@@ -93,7 +97,7 @@ for j in range(validation_steps):
             classifierList.append([clas.id, clas.condition, clas.action, clas.fitness, clas.prediction, clas.error, clas.experience, clas.time_stamp, clas.action_set_size, clas.numerosity])
 
 print("ALL Performance " + ": " + str((this_correct / validation_steps / rmax) * 100) + "%");
-print("The whole process is finished. After this, check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder, please. Thank you.")
+print("The whole process is finished. After this, please check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder. Thank you.")
 
 #Make accuracy list (Percentage of correct answers per 1000 iterations)
 ini_k = 0

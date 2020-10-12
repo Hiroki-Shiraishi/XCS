@@ -39,11 +39,12 @@ class Classifier:
     APPLY MUTATION (3.9 The genetic algorithm in XCS ~Mutation~)
        Mutates this classifier, changing the condition and action
        @param state - The state of the system to mutate around
-       @param mu- The probability with which to mutate
+       @param mu - The probability with which to mutate
        @param num_actions - The number of actions in the system
     """
     def _apply_mutation(self, state, mu, num_actions):
         self.condition = ''.join([self.condition[i] if numpy.random.rand() > mu else state[i] if self.condition[i] == '#' else '#' for i in range(len(self.condition))])
+        
         if numpy.random.rand() < mu:
             self.action = numpy.random.randint(0, num_actions)
 
@@ -58,8 +59,8 @@ class Classifier:
         vote = self.action_set_size * self.numerosity
         if self.experience > theta_del and self.fitness / self.numerosity < delta * average_fitness:
             return vote * average_fitness / (self.fitness / self.numerosity)
-        else:
-            return vote
+        
+        return vote
 
     """
     COULD SUBSUME (3.12 Subsumption ~Subsumption of a classifier~)
@@ -73,23 +74,30 @@ class Classifier:
     """
     IS MORE GENERAL (3.12 Subsumption ~Subsumption of a classifier~)
         Returns whether this classifier is more general than another
-        @param other - the classifier to check against
+        @param spec - the classifier to check against
     """
-    def _is_more_general(self, other):
-        if len([i for i in self.condition if i == '#']) <= len([i for i in other.condition if i == '#']):
+    def _is_more_general(self, spec):
+        if len([i for i in self.condition if i == '#']) <= len([i for i in spec.condition if i == '#']):
             return False
 
-        return all([s == '#' or s == o for s, o in zip(self.condition, other.condition)])
+        i = 0
+        while True:
+            if self.condition[i] != '#' and self.condition[i] != spec.condition[i]:
+                return False
+            i += 1
+            if i >= len(self.condition):
+                break
+        return True
 
     """
     DOES SUBSUME (3.12 Subsumption ~Subsumption of a classifier~)
         Returns whether this classifier subsumes another
-        @param other - the classifier to check against
+        @param tos - the classifier to check against
         @param theta_sub - See parameters.py
         @param e0 - See parameters.py
     """
-    def _does_subsume(self, other, theta_sub, e0):
-        return self.action == other.action and self._could_subsume(theta_sub, e0) and self._is_more_general(other)
+    def _does_subsume(self, tos, theta_sub, e0):
+        return self.action == tos.action and self._could_subsume(theta_sub, e0) and self._is_more_general(tos)
 
     def __hash__(self):
         return self.id
