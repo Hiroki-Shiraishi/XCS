@@ -232,6 +232,7 @@ class XCS:
         Makes parent selection in GA by Roulette-wheel selection
         (Tournament selection is also supported.)
         @param action_set - the set to run GA
+        @param selection_method - the method of parent selection
     """
     def _select_offspring(self, action_set, selection_method = 'Roulette'):
 
