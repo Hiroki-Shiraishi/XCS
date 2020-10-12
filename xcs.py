@@ -11,7 +11,7 @@ The main XCS class
 
 class XCS:
     """
-        Initializes an instance of the X classifier system
+        Initializes an instance of XCS
         @param parameters - A parameters instance (See parameters.py), containing the parameters for this system
         @param state_function - A function which returns the current state of the system, as a string
         @param reward_function - A function which takes a state and an action, performs the action and returns the reward
