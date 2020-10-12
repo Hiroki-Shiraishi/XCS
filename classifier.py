@@ -8,6 +8,11 @@ A classifier in XCS
 """
 
 class Classifier:
+    """
+        Initializes an instance of Classifier
+        @param parameters - A parameters instance (See parameters.py), containing the parameters for this classifier
+        @param state - The state of the system to generate classifier
+    """
     global_id = 0 #A Globally unique identifier
     def __init__(self, parameters, state = None):
         self.id = Classifier.global_id
