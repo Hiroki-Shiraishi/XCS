@@ -78,8 +78,8 @@ this_correct = 0
 for j in range(validation_steps):
     rand_state = state()
     this_correct = this_correct + reward(rand_state, my_xcs.classify(rand_state))
-    if j % 1000 == 0:
-        print("Iteration :", j)
+    if j % 1000 == 0 and j != 0:
+        print("Iteration :", j, "AverageReward :", this_correct / (j+1))
 
     rewardList[j][0]  = reward(rand_state,my_xcs.classify(rand_state))
     if j == validation_steps - 1:
@@ -105,7 +105,7 @@ for ini_k in range(validation_steps - 1000):
     sum_1000 = 0
     for k in range(ini_k, 1000 + ini_k):
         sum_1000 = sum_1000 + rewardList[k][0]
-    accuracyList[ini_k][0] = sum_1000/10000
+    accuracyList[ini_k][0] = sum_1000/1000
     #print(accuracyList)
 
 #Make CSV files
