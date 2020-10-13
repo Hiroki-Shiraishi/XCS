@@ -209,7 +209,7 @@ class XCS:
                 _apply_crossover(child_1, child_2)
                 child_1.prediction = child_2.prediction = numpy.average([parent_1.prediction, parent_2.prediction])
                 child_1.error = child_2.error = numpy.average([parent_1.error, parent_2.error])
-                child_1.fitness = child_2.fitness = numpy.average([parent_1.fitness, parent_2.fitness]) * 0.1
+                child_1.fitness = child_2.fitness = numpy.average([parent_1.fitness, parent_2.fitness])
 
             child_1.fitness = child_1.fitness * 0.1
             child_2.fitness = child_2.fitness * 0.1
