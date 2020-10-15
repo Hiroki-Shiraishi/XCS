@@ -111,10 +111,10 @@ class XCS:
         @param match_set - The match set to generate predictions
     """
     def _generate_prediction_array(self, match_set):
-        PA = [None] * self.parameters.num_actions
+        PA = [0.] * self.parameters.num_actions
         FSA = [0.] * self.parameters.num_actions
         for clas in match_set:
-            if PA[clas.action] == None:
+            if not PA[clas.action]:
                 PA[clas.action] = clas.prediction * clas.fitness
             else:
                 PA[clas.action] += clas.prediction * clas.fitness

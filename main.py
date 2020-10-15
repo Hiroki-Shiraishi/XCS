@@ -12,10 +12,7 @@ import struct
 rmax = 1000
 
 #The number of steps we learn for
-learning_steps = 1000
-
-#The number of steps we validate for
-validation_steps = 1000
+learning_steps = 10000
 
 #Load CSV dataset
 file = './dataset/Mux-6.csv' 
@@ -59,24 +56,17 @@ parameters = xcs.Parameters()
 #Construct an XCS instance
 my_xcs = xcs.XCS(parameters, state, reward, eop)
 
-#Train
-print("The training has just began. The number of the train is 10,000. Wait for a couple of seconds, please...")
+#Make lists to generate CSV
+rewardList = [[0] for i in range(learning_steps)]
+classifierList = [[0] * 10]
+accuracyList = [[0] for i in range(learning_steps - 1000)]
+
+#Begin learning and validation
+this_correct = 0
+print("The number of steps we learn for : " ,learning_steps)
 for j in range(learning_steps):
     my_xcs.run_experiment()
-    if j % 1000 == 0:
-        print("Iteration :", j)
-    #my_xcs.print_population()
-print("The Training is over. ")
 
-#Make lists to generate CSV file
-rewardList = [[0] for i in range(validation_steps)]
-classifierList = [[0] * 10]
-accuracyList = [[0] for i in range(validation_steps - 1000)]
-
-#Validate
-print("The next step is the validation. The number of the validation is 10,000. Please be patient...")
-this_correct = 0
-for j in range(validation_steps):
     rand_state = state()
     this_correct = this_correct + reward(rand_state, my_xcs.classify(rand_state))
     #print(my_xcs.classify(rand_state))
@@ -85,7 +75,7 @@ for j in range(validation_steps):
         print("Iteration :", j, "AverageReward :", this_correct / (j+1))
 
     rewardList[j][0]  = reward(rand_state,my_xcs.classify(rand_state))
-    if j == validation_steps - 1:
+    if j == learning_steps - 1:
         classifierList[0][0] = "Classifier"
         classifierList[0][1] = "Condition"
         classifierList[0][2] = "Action"
@@ -99,12 +89,12 @@ for j in range(validation_steps):
         for clas in my_xcs.population:
             classifierList.append([clas.id, clas.condition, clas.action, clas.fitness, clas.prediction, clas.error, clas.experience, clas.time_stamp, clas.action_set_size, clas.numerosity])
 
-print("ALL Performance " + ": " + str((this_correct / validation_steps / rmax) * 100) + "%");
+print("ALL Performance " + ": " + str((this_correct / learning_steps / rmax) * 100) + "%");
 print("The whole process is finished. After this, please check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder. Thank you.")
 
 #Make accuracy list (Percentage of correct answers per 1000 iterations)
 ini_k = 0
-for ini_k in range(validation_steps - 1000):
+for ini_k in range(learning_steps - 1000):
     sum_1000 = 0
     for k in range(ini_k, 1000 + ini_k):
         sum_1000 = sum_1000 + rewardList[k][0]
