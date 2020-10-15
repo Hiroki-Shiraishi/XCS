@@ -12,10 +12,10 @@ import struct
 rmax = 1000
 
 #The number of steps we learn for
-learning_steps = 10000
+learning_steps = 1000
 
 #The number of steps we validate for
-validation_steps = 10000
+validation_steps = 1000
 
 #Load CSV dataset
 file = './dataset/Mux-6.csv' 
@@ -47,6 +47,7 @@ def reward(state, action):
         return rmax
     else:
         return 0
+ 
 
 """
     Here is the main function. We'll train and validate XCS!!
@@ -78,6 +79,8 @@ this_correct = 0
 for j in range(validation_steps):
     rand_state = state()
     this_correct = this_correct + reward(rand_state, my_xcs.classify(rand_state))
+    #print(my_xcs.classify(rand_state))
+    #print(type(my_xcs.classify(rand_state)))
     if j % 1000 == 0 and j != 0:
         print("Iteration :", j, "AverageReward :", this_correct / (j+1))
 

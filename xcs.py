@@ -356,6 +356,7 @@ def _apply_crossover(child_1, child_2):
 
     if x > y:
         x, y = y, x
+
     i = 0
 
     child_1_condition = list(child_1.condition)
