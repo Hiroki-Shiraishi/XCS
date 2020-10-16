@@ -6,7 +6,7 @@ class Parameters:
     def __init__(self):
         self.num_actions  = 2                 #The number of actions in this system
         self.learning_steps = 30000           #The number of steps we learn for
-        self.bit          = 3                 #The umber of bits in the first address
+        self.bit          = 3                 #The number of bits in the first address
         self.state_length = self.bit + 2 ** self.bit  # The number of bits in the state
 
         self.N         = 400                  #The maximum size of the population in micro-classifiers

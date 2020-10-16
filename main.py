@@ -11,7 +11,7 @@ import struct
 #The maximum reward
 rmax = 1000
 
-#Load CSV dataset
+#Load CSV dataset(6bit)
 file = './dataset/Mux-6.csv' 
 with open(file,'r') as f: 
     reader = csv.reader(f)
