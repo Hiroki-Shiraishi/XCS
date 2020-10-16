@@ -46,6 +46,11 @@ class XCS:
         action = numpy.argmax(prediction_array)
         return action
 
+    def action_prediction(self, state, action):
+        match_set = self._generate_match_set(state)
+        prediction_array = self._generate_prediction_array(match_set)
+        return prediction_array[action]
+
     """
     RUN EXPERIMENT (3.3 The main loop)
         Runs a single iteration of the learning algorithm for this XCS instance
@@ -252,7 +257,7 @@ class XCS:
             parent = None
             for clas in action_set:
                 if parent == None or parent.fitness / parent.numerosity < clas.fitness / clas.numerosity:
-                    for i in range(1, clas.numerosity):
+                    for i in range(1, clas.numerosity + 1):
                         if numpy.random.rand() < self.parameters.tau:
                             parent = clas
                             break
