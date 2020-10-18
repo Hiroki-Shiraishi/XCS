@@ -244,7 +244,7 @@ class XCS:
 
         if selection_method == 'Roulette':
             fitness_sum = sum([clas.fitness for clas in action_set])
-            choice_point = numpy.random.rand()
+            choice_point = numpy.random.rand() * fitness_sum
 
             fitness_sum = 0.
             for clas in action_set:
