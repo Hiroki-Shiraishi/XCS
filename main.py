@@ -92,8 +92,10 @@ this_correct = this_syserr = all_correct = 0
 print("\n Iteration     Reward     SysErr")
 print("========== ========== ==========")
 for j in range(parameters.learning_steps):
+    #Learning
     my_xcs.run_experiment()
 
+    #Validation
     rand_state = state()
     this_correct += reward(rand_state, my_xcs.classify(rand_state))
     all_correct += reward(rand_state, my_xcs.classify(rand_state))
@@ -101,9 +103,9 @@ for j in range(parameters.learning_steps):
 
     if j % 1000 == 0 and j != 0:
         if j < 10000:
-            print("     ", j, "  ", '{:.03f}'.format(this_correct / (j-(j-1000))), "   ", '{:.03f}'.format(this_syserr / (j-(j-1000))))
+            print("     ", j, "  ", '{:.03f}'.format(this_correct / 1000), "   ", '{:.03f}'.format(this_syserr / 1000))
         else:
-            print("    ", j, "  ", '{:.03f}'.format(this_correct / (j-(j-1000))), "   ", '{:.03f}'.format(this_syserr / (j-(j-1000))))
+            print("    ", j, "  ", '{:.03f}'.format(this_correct / 1000), "   ", '{:.03f}'.format(this_syserr / 1000))
         this_correct = this_syserr = 0
 
     rewardList[j][0]  = reward(rand_state, my_xcs.classify(rand_state))
