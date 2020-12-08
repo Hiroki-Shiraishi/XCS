@@ -160,4 +160,4 @@ with open('./result/accuracy.csv', 'w') as f:
     dataWriter = csv.writer(f, lineterminator='\n')
     dataWriter.writerows(accuracyList)
 
-print("The whole process is over. After this, please check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder. Thank you.")
+print("\nThe whole process is over. After this, please check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder. Thank you.")
