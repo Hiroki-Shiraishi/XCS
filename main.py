@@ -57,7 +57,7 @@ def val_with_spaces(val):
 parameters = xcs.Parameters()
 print("[ XCS General Parameters ]")
 print("            bit =", parameters.bit)
-print(" Learning Steps =", parameters.learning_steps)
+print("  NumIterations =", parameters.iteration)
 print("              N =", parameters.N)
 print("           beta =", parameters.beta)
 print("          alpha =", parameters.alpha)
@@ -81,21 +81,24 @@ print("crossoverMethod = two-point\n")
 
 print("[ XCS Optional Settings]")
 print("            tau =", parameters.tau)
+if parameters.condense_iter != 0:
+    print("NumCondenseIter =", parameters.condense_iter)
 
 #Construct an XCS instance
 my_xcs = xcs.XCS(parameters, state, reward, eop)
 
 #Make lists to generate CSV
-rewardList = [[0] for i in range(parameters.learning_steps)]
+rewardList = [[0] for i in range(parameters.iteration + parameters.condense_iter)]
 classifierList = [[0] * 10]
-accuracyList = [[0] for i in range(parameters.learning_steps - 1000)]
+accuracyList = [[0] for i in range(parameters.iteration + parameters.condense_iter - 1000)]
 
 #Begin learning and validation
 this_correct = this_syserr = this_population_size = this_covering_occur_num= 0
 print("\n  Iteration      Reward      SysErr     PopSize  CovOccRate")
 print("=========== =========== =========== =========== ===========")
-for j in range(parameters.learning_steps):
-    #Learning(Pure Exploration)
+for j in range(parameters.iteration + parameters.condense_iter):
+    #Learning(Pure Exploration)'
+    if j >= parameters.iteration: parameters.chi = parameters.mu = 0
     my_xcs.run_experiment()
 
     #Validation(Pure Exploitation)
@@ -116,7 +119,7 @@ for j in range(parameters.learning_steps):
          this_correct = this_syserr = this_population_size = this_covering_occur_num = my_xcs.covering_occur_num = 0
 
     rewardList[j][0] = reward(rand_state, my_xcs.exploitation(rand_state))
-    if j == parameters.learning_steps - 1:
+    if j == parameters.iteration + parameters.condense_iter - 1:
         classifierList[0][0] = "Classifier"
         classifierList[0][1] = "Condition"
         classifierList[0][2] = "Action"
@@ -133,7 +136,7 @@ for j in range(parameters.learning_steps):
 print("The whole process is over. After this, please check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder. Thank you.")
 
 #Make accuracy list (Percentage of correct answers per 1000 iterations)
-for ini_k in range(parameters.learning_steps - 1000):
+for ini_k in range(parameters.iteration - 1000):
     sum_1000 = 0
     for k in range(ini_k, 1000 + ini_k):
         sum_1000 += rewardList[k][0]
