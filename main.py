@@ -1,9 +1,7 @@
 import numpy
 import numpy.random
-import pandas as pd
 import xcs
 import csv
-import struct
 
 """
     An implementation of an N-bit multiplexer problem for XCS
@@ -45,6 +43,11 @@ def reward(state, action):
 
 def system_error(state, action, action_prediction):
     return abs(reward(state, action) - action_prediction)
+
+def val_with_spaces(val):
+    str_val = str(val)
+    return ''.join(' ' for i in range(11 - len(str_val))) + str_val
+
 
 """
     Here is the main function. We'll train and validate XCS!!
@@ -88,27 +91,32 @@ classifierList = [[0] * 10]
 accuracyList = [[0] for i in range(parameters.learning_steps - 1000)]
 
 #Begin learning and validation
-this_correct = this_syserr = all_correct = 0
-print("\n Iteration     Reward     SysErr")
-print("========== ========== ==========")
+this_correct = this_syserr = all_correct = this_population_size = this_covering_occur_num= 0
+print("\n  Iteration      Reward      SysErr     PopSize  CovOccRate")
+print("=========== =========== =========== =========== ===========")
 for j in range(parameters.learning_steps):
-    #Learning
+    #Learning(Pure Exploration)
     my_xcs.run_experiment()
 
-    #Validation
+    #Validation(Pure Exploitation)
     rand_state = state()
-    this_correct += reward(rand_state, my_xcs.classify(rand_state))
-    all_correct += reward(rand_state, my_xcs.classify(rand_state))
-    this_syserr = this_syserr + system_error(rand_state, my_xcs.classify(rand_state), my_xcs.action_prediction(rand_state, my_xcs.classify(rand_state)))
+    this_correct += reward(rand_state, my_xcs.exploitation(rand_state))
+    all_correct += reward(rand_state, my_xcs.exploitation(rand_state))
+    this_syserr += system_error(rand_state, my_xcs.exploitation(rand_state), my_xcs.action_prediction(rand_state, my_xcs.exploitation(rand_state)))
+    this_population_size += len(my_xcs.population)
+    this_covering_occur_num += my_xcs.covering_occur_num
+    s = parameters.summary_interval
 
-    if j % 1000 == 0 and j != 0:
-        if j < 10000:
-            print("     ", j, "  ", '{:.03f}'.format(this_correct / 1000), "   ", '{:.03f}'.format(this_syserr / 1000))
-        else:
-            print("    ", j, "  ", '{:.03f}'.format(this_correct / 1000), "   ", '{:.03f}'.format(this_syserr / 1000))
-        this_correct = this_syserr = 0
+    if (j+1) % s == 0:
+         print(val_with_spaces(j+1),
+               val_with_spaces(f'{this_correct / s:.3f}'),
+               val_with_spaces(f'{this_syserr / s:.3f}'),
+               val_with_spaces(f'{this_population_size / s:.3f}'),
+               val_with_spaces(f'{this_covering_occur_num / s / 100:.8f}'))
 
-    rewardList[j][0]  = reward(rand_state, my_xcs.classify(rand_state))
+         this_correct = this_syserr = this_population_size = this_covering_occur_num = my_xcs.covering_occur_num = 0
+
+    rewardList[j][0] = reward(rand_state, my_xcs.exploitation(rand_state))
     if j == parameters.learning_steps - 1:
         classifierList[0][0] = "Classifier"
         classifierList[0][1] = "Condition"
@@ -127,13 +135,11 @@ print("ALL Performance " + ": " + str((all_correct / parameters.learning_steps /
 print("The whole process is over. After this, please check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder. Thank you.")
 
 #Make accuracy list (Percentage of correct answers per 1000 iterations)
-ini_k = 0
 for ini_k in range(parameters.learning_steps - 1000):
     sum_1000 = 0
     for k in range(ini_k, 1000 + ini_k):
-        sum_1000 = sum_1000 + rewardList[k][0]
+        sum_1000 += rewardList[k][0]
     accuracyList[ini_k][0] = sum_1000/1000
-    #print(accuracyList)
 
 #Make CSV files
 with open('./result/reward.csv','w') as f:
