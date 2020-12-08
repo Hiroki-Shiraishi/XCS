@@ -111,14 +111,12 @@ for j in range(parameters.iteration + parameters.condense_iter):
     this_population_size += len(my_xcs.population)
     this_covering_occur_num += my_xcs.covering_occur_num
 
-    s = parameters.summary_interval
-
-    if (j+1) % s == 0:
+    if (j+1) % parameters.summary_interval == 0:
          print(val_with_spaces(j+1),
-               val_with_spaces(f'{this_correct / s:.3f}'),
-               val_with_spaces(f'{this_syserr / s:.3f}'),
-               val_with_spaces(f'{this_population_size / s:.3f}'),
-               val_with_spaces(f'{this_covering_occur_num / s / 100:.8f}'))
+               val_with_spaces(f'{this_correct / parameters.summary_interval:.3f}'),
+               val_with_spaces(f'{this_syserr / parameters.summary_interval:.3f}'),
+               val_with_spaces(f'{this_population_size / parameters.summary_interval:.3f}'),
+               val_with_spaces(f'{this_covering_occur_num / parameters.summary_interval / 100:.8f}'))
 
          this_correct = this_syserr = this_population_size = this_covering_occur_num = my_xcs.covering_occur_num = 0
 
