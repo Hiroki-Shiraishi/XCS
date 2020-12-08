@@ -55,9 +55,13 @@ def val_with_spaces(val):
 
 #Set parameters
 parameters = xcs.Parameters()
-print("[ XCS General Parameters ]")
-print("            bit =", parameters.bit)
+print("[ Settings ]")
+print("    Environment = {}-bit Multiplexer problem".format(parameters.state_length))
 print("  NumIterations =", parameters.iteration)
+if parameters.condense_iter != 0:
+    print("NumCondenseIter =", parameters.condense_iter)
+
+print("\n[ XCS General Parameters ]")
 print("              N =", parameters.N)
 print("           beta =", parameters.beta)
 print("          alpha =", parameters.alpha)
@@ -81,8 +85,6 @@ print("crossoverMethod = two-point\n")
 
 print("[ XCS Optional Settings]")
 print("            tau =", parameters.tau)
-if parameters.condense_iter != 0:
-    print("NumCondenseIter =", parameters.condense_iter)
 
 #Construct an XCS instance
 my_xcs = xcs.XCS(parameters, state, reward, eop)
