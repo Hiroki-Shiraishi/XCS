@@ -1,6 +1,5 @@
 import numpy
 import numpy.random
-import itertools
 from copy import deepcopy
 from parameters import Parameters
 from classifier import Classifier
@@ -24,6 +23,7 @@ class XCS:
         self.eop_function = eop_function
         self.population = []
         self.time_stamp = 0
+        self.covering_occur_num = 0
 
         self.previous_action_set = None #[A]_{-1}
         self.previous_reward = 0        #rho_{-1}
@@ -40,7 +40,7 @@ class XCS:
        Classifies the given state, returning the class
        @param state - the state to classify
     """
-    def classify(self, state):
+    def exploitation(self, state):
         match_set = self._generate_match_set(state)
         prediction_array = self._generate_prediction_array(match_set)
         action = numpy.argmax(prediction_array)
@@ -103,6 +103,7 @@ class XCS:
         @param match_set - The set of current matches
     """
     def _generate_covering_classifier(self, state, match_set):
+        self.covering_occur_num += 1
         clas = Classifier(self.parameters, state)
         used_actions = [classifier.action for classifier in match_set]
         available_actions = list(set(range(self.parameters.num_actions)) - set(used_actions))
