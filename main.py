@@ -141,7 +141,7 @@ for clas in my_xcs.population:
     classifierList.append([clas.id, clas.condition, clas.action, clas.fitness, clas.prediction, clas.error, clas.experience, clas.time_stamp, clas.action_set_size, clas.numerosity])
 
 # Make Accuracy List (Percentage of correct answers per 1000 iterations)
-for ini_k in range(parameters.iteration - 1000):
+for ini_k in range(parameters.iteration + parameters.condense_iter - 1000):
     sum_1000 = 0
     for k in range(ini_k, 1000 + ini_k):
         sum_1000 += rewardList[k][0]
