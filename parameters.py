@@ -8,7 +8,7 @@ class Parameters:
         self.learning_steps = 10000           # The number of steps we learn for
         self.bit          = 2                 # The number of bits in the first address
         self.state_length = self.bit + 2 ** self.bit  # The number of bits in the state
-        self.summary_interval = 1000
+        self.summary_interval = 1000          # The number of summary interval
 
         self.N         = 400                  # The maximum size of the population in micro-classifiers
         self.beta      = 0.2                  # The learning rate for the prediction, prediction error, fitness and action set size
