@@ -91,7 +91,7 @@ classifierList = [[0] * 10]
 accuracyList = [[0] for i in range(parameters.learning_steps - 1000)]
 
 #Begin learning and validation
-this_correct = this_syserr = all_correct = this_population_size = this_covering_occur_num= 0
+this_correct = this_syserr = this_population_size = this_covering_occur_num= 0
 print("\n  Iteration      Reward      SysErr     PopSize  CovOccRate")
 print("=========== =========== =========== =========== ===========")
 for j in range(parameters.learning_steps):
@@ -101,7 +101,6 @@ for j in range(parameters.learning_steps):
     #Validation(Pure Exploitation)
     rand_state = state()
     this_correct += reward(rand_state, my_xcs.exploitation(rand_state))
-    all_correct += reward(rand_state, my_xcs.exploitation(rand_state))
     this_syserr += system_error(rand_state, my_xcs.exploitation(rand_state), my_xcs.action_prediction(rand_state, my_xcs.exploitation(rand_state)))
     this_population_size += len(my_xcs.population)
     this_covering_occur_num += my_xcs.covering_occur_num
@@ -131,7 +130,6 @@ for j in range(parameters.learning_steps):
         for clas in my_xcs.population:
             classifierList.append([clas.id, clas.condition, clas.action, clas.fitness, clas.prediction, clas.error, clas.experience, clas.time_stamp, clas.action_set_size, clas.numerosity])
 
-print("ALL Performance " + ": " + str((all_correct / parameters.learning_steps / rmax) * 100) + "%");
 print("The whole process is over. After this, please check reward.csv, classifier.csv, and accuracy.csv files in 'result' folder. Thank you.")
 
 #Make accuracy list (Percentage of correct answers per 1000 iterations)
