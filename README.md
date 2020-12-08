@@ -1,5 +1,5 @@
 # XCS (Accuracy-based LCS)
----
+
 Overview
 ---
 This is based ENTIRELY on "An algorithmic description of XCS". You can solve N-bit Multiplexer problem (default: N = 6).
@@ -11,7 +11,7 @@ python main.py
 ```
 If you want to change the hyperparameters, refer to "parameters.py", please.
 
----
+
 Output Example
 ---
 ```
