@@ -94,7 +94,7 @@ classifierList = [[0] * 10]
 accuracyList = [[0] for i in range(parameters.iteration + parameters.condense_iter - 1000)]
 
 # Begin learning and validation
-this_correct = this_syserr = this_population_size = this_covering_occur_num= 0
+this_correct = this_syserr = this_population_size = 0
 print("\n  Iteration      Reward      SysErr     PopSize  CovOccRate")
 print("=========== =========== =========== =========== ===========")
 
@@ -109,16 +109,15 @@ for j in range(parameters.iteration + parameters.condense_iter):
     this_correct += reward(rand_state, my_xcs.exploitation(rand_state))
     this_syserr += system_error(rand_state, my_xcs.exploitation(rand_state), my_xcs.action_prediction(rand_state, my_xcs.exploitation(rand_state)))
     this_population_size += len(my_xcs.population)
-    this_covering_occur_num += my_xcs.covering_occur_num
 
     if (j+1) % parameters.summary_interval == 0:
          print(val_with_spaces(j+1),
                val_with_spaces(f'{this_correct / parameters.summary_interval:.3f}'),
                val_with_spaces(f'{this_syserr / parameters.summary_interval:.3f}'),
                val_with_spaces(f'{this_population_size / parameters.summary_interval:.3f}'),
-               val_with_spaces(f'{this_covering_occur_num / parameters.summary_interval / 100:.8f}'))
+               val_with_spaces(f'{my_xcs.covering_occur_num / parameters.summary_interval / 100:.8f}'))
 
-         this_correct = this_syserr = this_population_size = this_covering_occur_num = my_xcs.covering_occur_num = 0
+         this_correct = this_syserr = this_population_size = my_xcs.covering_occur_num = 0
 
     rewardList[j][0] = reward(rand_state, my_xcs.exploitation(rand_state))
 
