@@ -5,7 +5,7 @@ A class that represents the parameters of an XCS system
 class Parameters:
     def __init__(self):
         self.num_actions  = 2                 # The number of actions in this system
-        self.iteration    = 10000             # The number of iterations we learn for
+        self.iteration    = 10000           # The number of iterations we learn for
         self.condense_iter = 10000           # The number of Wilson's rule condensation approach
         self.bit          = 2                 # The number of bits in the first address
         self.state_length = self.bit + 2 ** self.bit  # The number of bits in the state

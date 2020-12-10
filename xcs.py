@@ -8,6 +8,7 @@ from classifier import Classifier
 The main XCS class
 """
 
+
 class XCS:
     """
         Initializes an instance of XCS
@@ -16,6 +17,7 @@ class XCS:
         @param reward_function - A function which takes a state and an action, performs the action and returns the reward
         @param eop_function - A function which returns whether the state is at the end of the problem
     """
+
     def __init__(self, parameters, state_function, reward_function, eop_function):
         self.parameters = parameters
         self.state_function = state_function
@@ -25,13 +27,14 @@ class XCS:
         self.time_stamp = 0
         self.covering_occur_num = 0
 
-        self.previous_action_set = None #[A]_{-1}
-        self.previous_reward = 0        #rho_{-1}
-        self.previous_state = None      #sigma_{-1}
+        self.previous_action_set = None  # [A]_{-1}
+        self.previous_reward = 0  # rho_{-1}
+        self.previous_state = None  # sigma_{-1}
 
     """
         Prints the current population to stdout
     """
+
     def print_population(self):
         for i in self.population:
             print(i)
@@ -40,6 +43,7 @@ class XCS:
        Classifies the given state, returning the class
        @param state - the state to classify
     """
+
     def exploitation(self, state):
         match_set = self._generate_match_set(state)
         prediction_array = self._generate_prediction_array(match_set)
@@ -55,15 +59,16 @@ class XCS:
     RUN EXPERIMENT (3.3 The main loop)
         Runs a single iteration of the learning algorithm for this XCS instance
     """
+
     def run_experiment(self):
-        curr_state = self.state_function()  #sigma
+        curr_state = self.state_function()  # sigma
         match_set = self._generate_match_set(curr_state)
         prediction_array = self._generate_prediction_array(match_set)
         action = self._select_action(prediction_array)
-        action_set = _generate_action_set(match_set, action) 
+        action_set = _generate_action_set(match_set, action)
         reward = self.reward_function(curr_state, action)
 
-        #Update the previous set
+        # Update the previous set
         if self.previous_action_set:
             P = self.previous_reward + self.parameters.gamma * max(prediction_array)
             self._update_set(self.previous_action_set, P)
@@ -84,11 +89,12 @@ class XCS:
         Generates the match set for the given state, covering as necessary
         @param state - the state to generate a match set 
     """
+
     def _generate_match_set(self, state):
         set_m = []
         while len(set_m) == 0:
             set_m = [clas for clas in self.population if does_match(clas.condition, state)]
-            if len(set_m) < self.parameters.theta_mna:#Cover
+            if len(set_m) < self.parameters.theta_mna:  # Cover
                 clas = self._generate_covering_classifier(state, set_m)
                 self._insert_in_population(clas)
                 self._delete_from_population()
@@ -102,6 +108,7 @@ class XCS:
         @param state - The state to make the classifier conform to
         @param match_set - The set of current matches
     """
+
     def _generate_covering_classifier(self, state, match_set):
         self.covering_occur_num += 1
         clas = Classifier(self.parameters, state)
@@ -116,6 +123,7 @@ class XCS:
         Generates a prediction array for the given match set
         @param match_set - The match set to generate predictions
     """
+
     def _generate_prediction_array(self, match_set):
         PA = [0.] * self.parameters.num_actions
         FSA = [0.] * self.parameters.num_actions
@@ -128,7 +136,7 @@ class XCS:
 
         for i in range(self.parameters.num_actions):
             if FSA[i] != 0:
-                PA[i] = PA[i]/FSA[i]
+                PA[i] = PA[i] / FSA[i]
 
         return PA
 
@@ -138,6 +146,7 @@ class XCS:
         vs exploitation
         @param prediction_array - The prediction array to generate an action from
     """
+
     def _select_action(self, prediction_array):
         valid_actions = [action for action in range(self.parameters.num_actions) if prediction_array[action] != None]
         if len(valid_actions) == 0:
@@ -154,6 +163,7 @@ class XCS:
        @param action_set - The set to update
        @param P - The reward to use
     """
+
     def _update_set(self, action_set, P):
         set_numerosity = sum([clas.numerosity for clas in action_set])
         for clas in action_set:
@@ -165,7 +175,8 @@ class XCS:
             else:
                 clas.prediction = clas.prediction + self.parameters.beta * (P - clas.prediction)
                 clas.error = clas.error + self.parameters.beta * (abs(P - clas.prediction) - clas.error)
-                clas.action_set_size = clas.action_set_size + self.parameters.beta * (set_numerosity - clas.action_set_size)
+                clas.action_set_size = clas.action_set_size + self.parameters.beta * (
+                            set_numerosity - clas.action_set_size)
 
         self._update_fitness(action_set)
 
@@ -177,12 +188,16 @@ class XCS:
         Updates the given action set's fitness
         @param action_set - The set to update
     """
+
     def _update_fitness(self, action_set):
-        #UPDATE FITNESS in set [A]
-        kappa = {clas: 1 if clas.error < self.parameters.e0 else self.parameters.alpha * (clas.error / self.parameters.e0) ** -self.parameters.nu for clas in action_set}
+        # UPDATE FITNESS in set [A]
+        kappa = {clas: 1 if clas.error < self.parameters.e0 else self.parameters.alpha * (
+                    clas.error / self.parameters.e0) ** -self.parameters.nu for clas in action_set}
         accuracy_sum = sum([kappa[clas] * clas.numerosity for clas in action_set])
         for clas in action_set:
-            clas.fitness = clas.fitness + self.parameters.beta * (kappa[clas] * clas.numerosity / accuracy_sum - clas.fitness)
+            clas.fitness = clas.fitness + self.parameters.beta * (
+                        kappa[clas] * clas.numerosity / accuracy_sum - clas.fitness)
+            clas.kappa = kappa[clas]
 
     """
     RUN GA (3.9 The genetic algorithm in XCS)
@@ -191,16 +206,18 @@ class XCS:
         @param action_set - the action set to choose parents from
         @param state - The state mutate with
     """
+
     def _run_ga(self, action_set, state):
         if len(action_set) == 0:
             return
 
-        if self.time_stamp - sum([clas.time_stamp * clas.numerosity for clas in action_set]) / sum([clas.numerosity for clas in action_set]) > self.parameters.theta_GA:
+        if self.time_stamp - sum([clas.time_stamp * clas.numerosity for clas in action_set]) / sum(
+                [clas.numerosity for clas in action_set]) > self.parameters.theta_GA:
             for clas in action_set:
                 clas.time_stamp = self.time_stamp
-           
-            parent_1 = self._select_offspring(action_set, selection_method = 'Tournament')
-            parent_2 = self._select_offspring(action_set, selection_method = 'Tournament')
+
+            parent_1 = self._select_offspring(action_set, selection_method='Tournament')
+            parent_2 = self._select_offspring(action_set, selection_method='Tournament')
             child_1 = deepcopy(parent_1)
             child_2 = deepcopy(parent_2)
             child_1.id = Classifier.global_id
@@ -222,7 +239,7 @@ class XCS:
 
             for child in [child_1, child_2]:
                 child._apply_mutation(state, self.parameters.mu, self.parameters.num_actions)
-                if self.parameters.do_GA_subsumption == True:
+                if self.parameters.do_GA_subsumption:
                     if parent_1._does_subsume(child, self.parameters.theta_sub, self.parameters.e0):
                         parent_1.numerosity = parent_1.numerosity + 1
                     elif parent_2._does_subsume(child, self.parameters.theta_sub, self.parameters.e0):
@@ -241,7 +258,8 @@ class XCS:
         @param action_set - the set to run GA
         @param selection_method - the method of parent selection
     """
-    def _select_offspring(self, action_set, selection_method = 'Roulette'):
+
+    def _select_offspring(self, action_set, selection_method='Roulette'):
 
         if selection_method == 'Roulette':
             fitness_sum = sum([clas.fitness for clas in action_set])
@@ -257,12 +275,12 @@ class XCS:
         elif selection_method == 'Tournament':
             parent = None
             for clas in action_set:
-                if parent == None or parent.fitness / parent.numerosity < clas.fitness / clas.numerosity:
+                if parent is None or parent.fitness / parent.numerosity < clas.fitness / clas.numerosity:
                     for i in range(1, clas.numerosity + 1):
                         if numpy.random.rand() < self.parameters.tau:
                             parent = clas
                             break
-            if parent == None:
+            if parent is None:
                 parent = numpy.random.choice(action_set)
             return parent
 
@@ -275,6 +293,7 @@ class XCS:
         subsumed by some other classifier in the population
         @param clas - the classifier to insert
     """
+
     def _insert_in_population(self, clas):
         for c in self.population:
             if c.condition == clas.condition and c.action == clas.action:
@@ -286,6 +305,7 @@ class XCS:
     DELETE FROM POPULATION (3.11 Deletion from the population ~Roulette-wheel deletion~)
         Deletes a classifier from the population, if necessary
     """
+
     def _delete_from_population(self):
         numerosity_sum = sum([clas.numerosity for clas in self.population])
         if numerosity_sum <= self.parameters.N:
@@ -293,7 +313,7 @@ class XCS:
 
         average_fitness = sum([clas.fitness for clas in self.population]) / numerosity_sum
         vote_sum = 0.
-        
+
         for clas in self.population:
             vote_sum = vote_sum + clas._deletion_vote(average_fitness, self.parameters.theta_del, self.parameters.delta)
 
@@ -302,7 +322,7 @@ class XCS:
 
         for clas in self.population:
             vote_sum = vote_sum + clas._deletion_vote(average_fitness, self.parameters.theta_del, self.parameters.delta)
-            if(vote_sum > choice_point):
+            if vote_sum > choice_point:
                 if clas.numerosity > 1:
                     clas.numerosity -= 1
                 else:
@@ -315,11 +335,14 @@ class XCS:
         and merging things into it
         @param action_set - the set to perform subsumption on
     """
+
     def _do_action_set_subsumption(self, action_set):
         cl = None
         for c in action_set:
             if c._could_subsume(self.parameters.theta_sub, self.parameters.e0):
-                if (cl == None or len([i for i in c.condition if i == '#']) > len([i for i in cl.condition if i == '#']) or (len([i for i in c.condition if i == '#']) == len([i for i in cl.condition if i == '#']) and numpy.random.rand() < 0.5)):
+                if (cl is None or len([i for i in c.condition if i == '#']) > len(
+                        [i for i in cl.condition if i == '#']) or (len([i for i in c.condition if i == '#']) == len(
+                        [i for i in cl.condition if i == '#']) and numpy.random.rand() < 0.5)):
                     cl = c
 
         if cl:
@@ -329,20 +352,26 @@ class XCS:
                     action_set.remove(c)
                     self.population.remove(c)
 
+
 """
 DOES MATCH (3.4 Formation of the match set)
     Returns whether the given state matches the given condition
     @param condition - The condition to match against
     @param state - The state to match against
 """
+
+
 def does_match(condition, state):
     return all([c == '#' or c == s for c, s in zip(condition, state)])
+
 
 """
 GENERATE ACTION SET (3.7 Formation of the action set)
     Forms action set from match set
     @param match_set - The match set for generating action set
 """
+
+
 def _generate_action_set(match_set, action):
     action_set = []
     for clas in match_set:
@@ -350,12 +379,15 @@ def _generate_action_set(match_set, action):
             action_set.append(clas)
     return action_set
 
+
 """
 APPLY CROSSOVER (3.9 The genetic algorithm in XCS ~Crossover~)
     Cross's over the given children, modifying their conditions
     @param child_1 - The first child to crossover
     @param child_2 - The second child to crossover
 """
+
+
 def _apply_crossover(child_1, child_2):
     x = numpy.random.randint(0, len(child_1.condition))
     y = numpy.random.randint(0, len(child_1.condition))
